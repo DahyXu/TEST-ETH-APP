@@ -6,8 +6,8 @@ import React, { useEffect, useState } from "react";
 import { Body, Button, Container, Header, Image, Link } from "./components";
 import logo from "./ethereumLogo.png";
 
-import { addresses, abis } from "@my-app/contracts";
-import GET_TRANSFERS from "./graphql/subgraph";
+import { MAINNET_ID, addresses, abis } from "@compound-app/contracts";
+import GET_MONEY_MARKETS from "./graphql/subgraph";
 
 function WalletButton() {
   const [rendered, setRendered] = useState("");
@@ -51,20 +51,20 @@ function App() {
   // Read more about useDapp on https://usedapp.io/
   const { error: contractCallError, value: tokenBalance } =
     useCall({
-       contract: new Contract(addresses.ceaErc20, abis.erc20),
+       contract: new Contract(addresses[MAINNET_ID].tokens.cDAI, abis.tokens.cDAI),
        method: "balanceOf",
        args: ["0x3f8CB69d9c0ED01923F11c829BaE4D9a4CB6c82C"],
     }) ?? {};
 
-  const { loading, error: subgraphQueryError, data } = useQuery(GET_TRANSFERS);
+  const { loading, error: subgraphQueryError, data } = useQuery(GET_MONEY_MARKETS);
 
   useEffect(() => {
     if (subgraphQueryError) {
       console.error("Error while querying subgraph:", subgraphQueryError.message);
       return;
     }
-    if (!loading && data && data.transfers) {
-      console.log({ transfers: data.transfers });
+    if (!loading && data && data.markets) {
+      console.log({ markets: data.markets });
     }
   }, [loading, subgraphQueryError, data]);
 
@@ -82,7 +82,7 @@ function App() {
           Learn React
         </Link>
         <Link href="https://usedapp.io/">Learn useDapp</Link>
-        <Link href="https://thegraph.com/docs/quick-start">Learn The Graph</Link>
+        <Link href="https://compound.finance/developers">Learn Compound</Link>
       </Body>
     </Container>
   );
